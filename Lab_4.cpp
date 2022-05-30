@@ -1,9 +1,8 @@
-#include<iostream>
+#include <iostream>
 using namespace std;
 class GovEmp;
 class PrivEmp;
-//Author-202101224 SABVA JAY DILIPBHAI
-//DATE:26-4-2022    
+
 class Person
 {
 public:
@@ -18,8 +17,8 @@ class GovEmp : private Person
 private:
 	bool dis_act;
 	int ask;
-public:
 
+public:
 	/*void setdis_act(bool dis_act)
 	{
 		dis_act = dis_act;
@@ -28,21 +27,22 @@ public:
 	{
 		return dis_act;
 	}*/
-
 	GovEmp()
 	{
 		cout << "Enter Your ID:\n";
 		cin >> id;
-		
+
 		cout << "Enter Your CIBIL Score:(150-900)\n";
 		cin >> cibil_score;
-		if (cibil_score < 150 || cibil_score>900)
+		if (cibil_score < 150 || cibil_score > 900)
 		{
-			do
+			cout << "Please Enter Between 150-900\n";
+			cin >> cibil_score;
+			while (cibil_score < 150 || cibil_score > 900)
 			{
 				cout << "Please Enter Between 150-900\n";
 				cin >> cibil_score;
-			} while (cibil_score < 150 || cibil_score>900);
+			}
 		}
 
 		cout << "Enter Your Monthly Income:\n";
@@ -51,12 +51,20 @@ public:
 		cout << "Enter Year Of Remaining Service:\n";
 		cin >> year_of_s;
 
-		cout << "Is Any Disciplinary Action Taken Against You:\nFor Yes Enter 1\nFor No Enter 0\nPlease Do Not Number Any Other Than 0 Or 1\n";
+		cout << "Is Any Disciplinary Action Taken Against You:\nFor Yes Enter 1\nFor No Enter 0\n";
 		cin >> dis_act;
-		
+		if (dis_act != 0 && dis_act != 1)
+		{
+			cout << "Please Enter Valid Input\n";
+			cin >> dis_act;
+			while (dis_act != 0 && dis_act != 1) // ahiya check karvu loop kem execute thay che
+			{
+				cout << "Please Enter Valid Input\n";
+				cin >> dis_act;
+			}
+		}
 	}
 	friend void LoanGrant(GovEmp g1, GovEmp g2, PrivEmp p1, PrivEmp p2, int check);
-
 };
 
 class PrivEmp : private Person
@@ -64,6 +72,7 @@ class PrivEmp : private Person
 private:
 	int rating;
 	int ask;
+
 public:
 	/*void rating(int rating)
 	{
@@ -73,7 +82,6 @@ public:
 	{
 		return rating;
 	}*/
-
 	PrivEmp()
 	{
 		cout << "Enter Your ID:\n";
@@ -81,14 +89,15 @@ public:
 
 		cout << "Enter Your CIBIL Score Between (150-900)\n";
 		cin >> cibil_score;
-		if (cibil_score < 150 || cibil_score>900)
+		if (cibil_score < 150 || cibil_score > 900)
 		{
-			do
+			cout << "Please Enter Between 150-900\n";
+			cin >> cibil_score;
+			while (cibil_score < 150 || cibil_score > 900)
 			{
 				cout << "Please Enter Between 150-900\n";
 				cin >> cibil_score;
-			} while (cibil_score < 150 || cibil_score>900);
-			
+			}
 		}
 
 		cout << "Enter Your Monthly Income:\n";
@@ -99,20 +108,18 @@ public:
 
 		cout << "What Are Your Rating(0-4)\n";
 		cin >> rating;
-		if (rating < 0 || rating>4)
+		if (rating < 0 || rating > 4)
 		{
 			cout << "Please Enter Between 0-4\n";
 			cin >> rating;
-			do
+			while (rating < 0 || rating > 4)
 			{
 				cout << "Please Enter Between 0-4\n";
 				cin >> rating;
-			} while (rating < 0 || rating>4);
+			}
 		}
-
 	}
 	friend void LoanGrant(GovEmp g1, GovEmp g2, PrivEmp p1, PrivEmp p2, int check);
-
 };
 
 void LoanGrant(GovEmp g1, GovEmp g2, PrivEmp p1, PrivEmp p2, int check)
@@ -130,7 +137,6 @@ void LoanGrant(GovEmp g1, GovEmp g2, PrivEmp p1, PrivEmp p2, int check)
 	g2.ask = check;
 	p1.ask = check;
 	p2.ask = check;
-
 	if (g1.ask == 0)
 	{
 
@@ -148,10 +154,9 @@ void LoanGrant(GovEmp g1, GovEmp g2, PrivEmp p1, PrivEmp p2, int check)
 		}
 		cout << "\n";
 	}
-
 	if (g2.ask == 0)
 	{
-	
+
 		if (g2.dis_act == 0 && g2.month_income >= 50000 && g2.year_of_s >= 20 && g2.cibil_score >= 350)
 		{
 			cout << "Congratulation G2 You Are Eligable For Loan Of 10Lakh INR\n";
@@ -166,10 +171,9 @@ void LoanGrant(GovEmp g1, GovEmp g2, PrivEmp p1, PrivEmp p2, int check)
 		}
 		cout << "\n";
 	}
-
 	if (p1.ask == 0)
 	{
-		
+
 		if (p1.rating >= 0 && p1.month_income >= 50000 && p1.year_of_s >= 20 && p1.cibil_score >= 350)
 		{
 			cout << "Congratulation P1 You Are Eligable For Loan Of 10Lakh INR\n";
@@ -183,12 +187,10 @@ void LoanGrant(GovEmp g1, GovEmp g2, PrivEmp p1, PrivEmp p2, int check)
 			cout << "Sorry P1 You Are Not Eligbile For Individual Loan\n";
 		}
 		cout << "\n";
-
 	}
-
 	if (p2.ask == 0)
 	{
-		
+
 		if (p2.rating >= 3 && p2.month_income >= 70000 && p2.year_of_s >= 20 && p2.cibil_score >= 350)
 		{
 			cout << "Congratulation P2 You Are Eligable For Loan Of 10Lakh INR\n";
@@ -202,9 +204,7 @@ void LoanGrant(GovEmp g1, GovEmp g2, PrivEmp p1, PrivEmp p2, int check)
 			cout << "Sorry P2 You Are Not Eligbile For Individual Loan\n";
 		}
 		cout << "\n";
-
 	}
-
 	if (p1.ask == 1)
 	{
 		if (g1.dis_act == 0 && p1.rating >= 3)
@@ -218,19 +218,14 @@ void LoanGrant(GovEmp g1, GovEmp g2, PrivEmp p1, PrivEmp p2, int check)
 			{
 				cout << "Congratulation G1 And P1 You Are Eligible For Loan Of 5 Lakh INR\n";
 			}
-			
+
 			else
 			{
 				cout << "Sorry G1 And P1 You Are Not Eligible For Joint Loan\n";
 			}
 		}
-		else
-		{
-			cout << "Sorry G1 And P1 You Are Not Eligible For Joint Loan\n";
-		}
 		cout << "\n";
 	}
-
 	if (g1.ask == 1)
 	{
 		if (g1.dis_act == 0 && p2.rating >= 3)
@@ -249,13 +244,8 @@ void LoanGrant(GovEmp g1, GovEmp g2, PrivEmp p1, PrivEmp p2, int check)
 				cout << "Sorry G1 And P2 You Are Not Eligible For Joint Loan\n";
 			}
 		}
-		else
-		{
-			cout << "Sorry G1 And P2 You Are Not Eligible For Joint Loan\n";
-		}
 		cout << "\n";
 	}
-
 	if (p2.ask == 1)
 	{
 		if (g2.dis_act == 0 && p1.rating >= 3)
@@ -268,19 +258,14 @@ void LoanGrant(GovEmp g1, GovEmp g2, PrivEmp p1, PrivEmp p2, int check)
 			{
 				cout << "Congratulation G2 And P1 You Are Eligible For Loan Of 5 Lakh INR\n";
 			}
-			
+
 			else
 			{
 				cout << "Sorry G2 And P1 You Are Not Eligible For Joint Loan\n";
 			}
 		}
-		else
-		{
-			cout << "Sorry G2 And P1 You Are Not Eligible For Joint Loan\n";
-		}
 		cout << "\n";
 	}
-
 	if (g2.ask == 1)
 	{
 		if (g2.dis_act == 0 && p2.rating >= 3)
@@ -298,14 +283,8 @@ void LoanGrant(GovEmp g1, GovEmp g2, PrivEmp p1, PrivEmp p2, int check)
 				cout << "Sorry G2 And P2 You Are Not Eligible For Joint Loan\n";
 			}
 		}
-		else
-		{
-			cout << "Sorry G2 And P2 You Are Not Eligible For Joint Loan\n";
-		}
-		cout << "\n";
 	}
 	cout << "\n";
-
 }
 
 int main()
@@ -340,8 +319,7 @@ int main()
 			cin >> check;
 		}
 	}
-
-	cout<<"\n";
+	cout << "\n";
 	LoanGrant(g1, g2, p1, p2, check);
 	return 0;
 }
