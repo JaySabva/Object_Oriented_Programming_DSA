@@ -27,7 +27,7 @@ class vector {
       }
    }
 
-   vector(float * b) {
+   vector(float *arr) {
       for (int i = 0; i < n; i++) {
          vec[i] = arr[i];
       }
@@ -57,7 +57,7 @@ int main() {
       cin >> arr[i];
    }
 
-   vector v(b);
+   vector v(arr);
 
    int x, y;
    vector p = v; //copy constructor call
