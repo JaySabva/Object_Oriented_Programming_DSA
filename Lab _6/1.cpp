@@ -171,6 +171,7 @@ int main()
             case 6:
             {
                 l.reverse();
+                l.traverse();
                 break;
             }
             case 7:
