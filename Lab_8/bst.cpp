@@ -187,8 +187,8 @@ class binarytree {
    binarytree() {
       root = NULL;
    }
-   queue q;
    void levelorderinsertion(int d) {
+        queue q;
       node * temp1 = new node(d);
       if (root == NULL) {
          root = temp1;
@@ -267,11 +267,12 @@ class binarytree {
         return;
    }
    void deletDeepest(node * temp) {
-      q.push(root);
+    queue q1;
+      q1.push(root);
       node * temp2;
-      while (!q.empty()) {
-         temp2 = q.front1();
-         q.pop();
+      while (!q1.empty()) {
+         temp2 = q1.front1();
+         q1.pop();
          if (temp2 == temp) {
             temp2 = NULL;
             delete temp;
@@ -283,7 +284,7 @@ class binarytree {
                delete temp;
                return;
             } else {
-               q.push(temp2 -> right);
+               q1.push(temp2 -> right);
             }
          }
          if (temp2 -> left != NULL) {
@@ -292,7 +293,7 @@ class binarytree {
                delete temp;
                return;
             } else {
-               q.push(temp2 -> left);
+               q1.push(temp2 -> left);
             }
          }
       }
@@ -303,21 +304,21 @@ class binarytree {
          cout << "Tree is empty" << endl;
          return;
       }
-      queue q;
-      q.push(root);
+      queue q1;
+      q1.push(root);
       node * temp;
       node * data_node = NULL;
-      while (!q.empty()) {
-         temp = q.front1();
-         q.pop();
+      while (!q1.empty()) {
+         temp = q1.front1();
+         q1.pop();
          if (temp -> data == data) {
             data_node = temp;
          }
          if (temp -> left != NULL) {
-            q.push(temp -> left);
+            q1.push(temp -> left);
          }
          if (temp -> right != NULL) {
-            q.push(temp -> right);
+            q1.push(temp -> right);
          }
       }
       if (data_node == NULL) {
