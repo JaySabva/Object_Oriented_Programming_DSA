@@ -1,7 +1,7 @@
 #include<iostream>
 using namespace std;
 class node;
-class Red_Black_Tree;
+class AVLT;
 
 class quenode{
     public:
@@ -15,28 +15,28 @@ class quenode{
 
 class queue{
     public:
-        quenode* head;
-        quenode* tail;
+        quenode* front;
+        quenode* rear;
         queue(){
-            head = NULL;
-            tail = NULL;
+            front = NULL;
+            rear = NULL;
         }
         void push(node* data){
             quenode* new_node = new quenode(data);
-            if(head == NULL){
-                head = new_node;
-                tail = new_node;
+            if(front == NULL){
+                front = new_node;
+                rear = new_node;
             }
             else{
-                tail->next = new_node;
-                tail = new_node;
+                rear->next = new_node;
+                rear = new_node;
             }
         }
         node* pop(){
-            if(head == NULL)
+            if(front == NULL)
                 return NULL;
-            quenode* temp = head;
-            head = head->next;
+            quenode* temp = front;
+            front = front->next;
             return temp->data;
         }
 };
@@ -46,49 +46,47 @@ class node{
         int data;
         node* left;
         node* right;
-        char color;
+        int height;
         node(int key){
-            color='R';
+            height = 0;
             data = key;
             left = NULL;
             right = NULL;
         }
         node(){
-            color='R';
+            height = 0;
             left = NULL;
             right = NULL;
         }
 };
 
-class Red_Black_Tree{
+class AVLT{
     public:
         node* root;
-        Red_Black_Tree(){
-            cout<<"Enter Root Data: ";
+        AVLT(){
+            cout<<"Enter root node: ";
             int key;
             cin >> key;
             root = new node(key);
-            root->color='B';
         }  
         void insert(node* root,int key);
-        void balance_tree(node* curr);
-        void checkroot(node *curr);
-        void node_split(node* curr);
-        node* find_parent(node* curr,node* child);
+        int delete_node(node* curr,int key);
+        void BalanceTree(node* curr);
+        void height(node* curr);
 };
 
 void inorder(node* curr){
     if(curr == NULL)
         return;
     inorder(curr->left);
-    cout<<curr->data<<curr->color<<" ";
+    cout<<curr->data<<" ";
     inorder(curr->right);
 }
 
 void preorder(node* curr){
     if(curr == NULL)
         return;
-    cout<<curr->data<<curr->color<<" ";
+    cout<<curr->data<<" ";
     preorder(curr->left);
     preorder(curr->right);
 }
@@ -98,153 +96,271 @@ void postorder(node* curr){
         return;
     postorder(curr->left);
     postorder(curr->right);
-    cout<<curr->data<<curr->color<<" ";
+    cout<<curr->data<<" ";
 }
 
 void levelorder(node* curr){
     queue q;
     if(curr==NULL){
-        cout<<"Tree is Empty\n";
+        cout<<"Empty\n";
         return;
     }
         
     q.push(curr);
-    while(q.head!=NULL){
+    while(q.front!=NULL){
         node* temp = q.pop();
-        cout<<temp->data<<temp->color<<" ";
+        cout<<temp->data<<" ";
         if(temp->left!=NULL)
             q.push(temp->left);
         if(temp->right!=NULL)
             q.push(temp->right);
     }
 }	
-
-node* Red_Black_Tree::find_parent(node* curr,node* child){
-    if(curr == NULL)
-        return NULL;
-    if(curr->data<child->data){
-        if(curr->right==NULL)
-            return NULL;
-        else if(curr->right == child)
-            return curr;
-        else
-            return find_parent(curr->right,child);
-    }
-    else{
-        if(curr->left==NULL)
-            return NULL;
-        else if(curr->left == child)
-            return curr;
-        else
-            return find_parent(curr->left,child);
-    }
-}
-
-void Red_Black_Tree::node_split(node* curr){
-    cout<<"Node Split At "<<curr->data<<" "<<curr->left->data<<" "<<curr->right->data<<"\n";
-    cout << "Color Flip From Red To Black At " << curr->left->data << "\n";
-    curr->left->color='B';
-    checkroot(curr);
-}
-
-void Red_Black_Tree::checkroot(node* curr){
-    node* parent=find_parent(root,curr);
-    //root node case
-    if(parent==NULL)
-        return;
-    //3-node parent case
-    if(parent->left->color=='R')
-        node_split(parent);
-    else
-        parent->left->color='R';
-}
-
-void Red_Black_Tree::insert(node* curr,int key){
+	
+void AVLT::insert(node* curr,int key){
         
-        if(curr->data < key)
+        if (curr->data < key)
         {
-            if(curr->right==NULL){
+            if(curr->right==NULL)
                 curr->right=new node(key);
-                curr->right->color='B';
-                if(curr->left!=NULL){
-                    node_split(curr);
-                }
-                else{
-                    cout<<"2-node at "<<curr->data<<" to 3-node with "<<curr->right->data<<"\n";
-                    curr->left=new node(curr->data);
-                    curr->data = curr->right->data;
-                    node* temp=curr->right;
-                    curr->right = NULL;
-                    delete temp;
-                }
-            }
             else
                 insert(curr->right,key);
         }
         else{
-            if(curr->left==NULL){
-                
+            if(curr->left==NULL)
                 curr->left=new node(key);
-                cout<<"2-node at "<<curr->data<<" to 3-node with "<<curr->left->data<<"\n";
-                curr->left->color = 'R';
-                if(curr->color=='R'){
-                    
-                    node *parent = find_parent(root,curr);
-                    //root cannot be red
-                    cout<<"Rotation at "<<parent->data<<endl;
-                    int p_data = parent->data;
-                    parent->data = curr->data;
-                    parent->left = curr->left;
-                    insert(root, p_data);
-                }
-            }
             else
                 insert(curr->left,key);
         }
 }
 
+void swap(node* curr){
+    if(curr->left!=NULL){
+        if(curr->left->data==-1){
+            node* temp=curr->left;
+            delete(temp);
+            curr->left=NULL;
+        }
+        else
+            swap(curr->left);
+    }
+    if(curr->right!=NULL){
+        if(curr->right->data==-1){
+            node* temp=curr->right;
+            delete(temp);
+            curr->right=NULL;
+        }
+        else
+            swap(curr->right);
+    }
+}
+
+int AVLT::delete_node(node* curr,int key){
+    if(curr==NULL)
+        return 1;
+    else if(curr->data>key){
+        return delete_node(curr->left,key);
+    }
+    else if(curr->data<key){
+        return delete_node(curr->right,key);
+    }
+    else{
+        if(curr->left==NULL){
+            if(curr->right==NULL){
+                curr->data=-1;
+                swap(root);
+            }
+            else{
+                node* temp = curr->right;
+                curr->data = temp->data;
+                curr->right = temp->right;
+                curr->left = temp->left;
+                delete temp;
+            }
+        }
+        else if(curr->right==NULL){
+            node* temp = curr->left;
+            curr->data = temp->data;
+            curr->right = temp->right;
+            curr->left = temp->left;
+            delete temp;
+        }
+        else{
+            if(curr->right->left==NULL){
+                node* temp = curr->right;
+                curr->data = temp->data;
+                curr->right = temp->right;
+                delete temp;
+            }
+            else{
+            for(node* temp = curr->right;temp->left!=NULL;temp=temp->left)
+            {
+                if(temp->left->left==NULL){
+                    node *erase = temp->left;
+                    curr->data = temp->left->data;
+                    temp->left = NULL;
+                    delete erase;
+                    
+                    break;
+                }
+            }
+            }
+        }
+        return 0;
+    }
+}
+
+void AVLT::height(node* curr){
+    if(curr->left==NULL&&curr->right==NULL)
+    {
+        curr->height=0;
+        return;
+    }
+    if(curr->left==NULL){
+        curr->height = 1+curr->right->height;
+        return;
+    }
+    else
+        height(curr->left);
+
+    if(curr->right==NULL){
+        curr->height = 1+curr->left->height;
+        return;
+    }
+    else
+        height(curr->right);
+
+    curr->height = max(curr->left->height,curr->right->height)+1;
+}
+
+void LeftRotation(node* curr){
+    cout<<"\nleft rotate at "<<curr->data<<endl;
+    node *b = curr;
+    node* a = curr->right;
+
+    //data exchange
+    int temp=a->data;
+    a->data=b->data;
+    b->data=temp;
+
+    //childern exchange
+    b->right = a->right;
+    a->right = a->left;
+    a->left = b->left;
+    b->left = a;
+}
+
+void RightRotation(node* curr){
+    cout<<"\nright rotate at "<<curr->data<<endl;
+    node* a=curr;
+    node* b=curr->left;
+
+    //data exchange
+    int temp=a->data;
+    a->data=b->data;
+    b->data=temp;
+
+    //childern exchange
+    a->left = b->left;
+    b->left= b->right;
+    b->right = a->right;
+    a->right = b;
+}
+
+void AVLT::BalanceTree(node* curr){
+    if(curr==NULL)
+        return;
+    BalanceTree(curr->left);
+    BalanceTree(curr->right);
+    height(curr);
+    int lh = curr->left==NULL?-1:curr->left->height;
+    int rh = curr->right==NULL?-1:curr->right->height;
+    if(abs(lh-rh)>1){
+        cout<<"\nRebalanced at "<<curr->data<<endl;
+        if(lh>rh){
+            int llh=curr->left->left==NULL?-1:curr->left->left->height;
+            int lrh=curr->left->right==NULL?-1:curr->left->right->height;
+            if(llh>lrh){
+                RightRotation(curr);
+            }
+            else{
+                LeftRotation(curr->left);
+                RightRotation(curr);
+            }
+        }
+        else{
+            int rlh=curr->right->left==NULL?0:curr->right->left->height;
+            int rrh=curr->right->right==NULL?0:curr->right->right->height;
+            if(rlh>=rrh){
+                LeftRotation(curr);
+            }
+            else{
+                RightRotation(curr->right);
+                LeftRotation(curr);
+            }
+        }
+    }
+}
+
 int main(){
-        Red_Black_Tree rbt;
+        AVLT at;
         int choice=0;
-        while(choice!=6){
+        while(choice!=7){
             cout<<"\n";
-            levelorder(rbt.root);
-            cout<<"\n";
-            cout<<"\nchoose option: \n";
-            cout<<"1.Insertion\n";
-            cout<<"2.Levelorder Traversal\n";
-            cout<<"3.Preorder Traversal\n";
-            cout<<"4.Inorder Traversal\n";
-            cout<<"5.Postorder Traversal\n";
-            cout<<"6.Exit\n";
+            int choice;
+            cout << "-------------------------------------" << endl;
+             cout << "1.Insertion" << endl;
+             cout << "2.Deletion" << endl;
+            cout<<"3.Preorder\n";
+            cout<<"4.Inorder\n";
+            cout<<"5.Postorder\n";
+            cout<<"6.Levelorder\n";
+            cout<<"7.Exit\n";
+            cout<<"Enter Your choice"<<endl;
+            cout << "-------------------------------------" << endl;
             cin>>choice;
             switch(choice){
                 case 1: { 
                     int key;
-                    cout<<"Enter The Data:";
+                    cout<<"Enter the data";
                     cin>>key;
-                    rbt.insert(rbt.root,key);
+                    at.insert(at.root,key);
                     break;
                 }
-                case 2: 
-                    cout<<"Levelorder Traversal: ";
-                    levelorder(rbt.root);
+                case 2: {
+                    int key;
+                    cout<<"Enter the data to be deleted\n";
+                    cin>>key;
+                    if(at.delete_node(at.root,key)==1)
+                            cout<<"Key not found\n";
+                    else if(at.root->data==-1){
+                        cout<<"root: ";
+                        cin>>key;
+                        at.root=new node(key);
+                    }
                     break;
+                }
                 case 3:
-                    cout<<"Preorder Traversal: ";
-                    preorder(rbt.root);
+                    cout<<"Preorder Traversal: \n";
+                    preorder(at.root);
                     break;
                 case 4:
-                    cout<<"Inorder Traversal: ";
-                    inorder(rbt.root);
+                    cout<<"Inorder Traversal: \n";
+                    inorder(at.root);
                     break;
                 case 5:
-                    cout<<"Postorder Traversal: ";
-                    postorder(rbt.root);
+                    cout<<"Postorder Traversal: \n";
+                    postorder(at.root);
+                    break;
+                case 6:
+                    cout<<"Levelorder Traversal: \n";
+                    levelorder(at.root);
                     break;
                 default:
                     return 0;
             }
+            at.height(at.root);
+            at.BalanceTree(at.root);
         }
         return 0;
     }
