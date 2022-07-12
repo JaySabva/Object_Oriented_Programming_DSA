@@ -22,6 +22,7 @@ class queue {
    int size()
    {
         int size=rear-front+1;
+        return;
    }
    void push(node * temp) {
       if (front == -1) {
